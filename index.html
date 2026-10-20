@@ -87,8 +87,11 @@ ol,ul{padding-left:1.3em;margin:6px 0}
           <div class="field"><label for="hi">高標分數<span class="opt">用來檢查</span></label><input id="hi" type="number" inputmode="decimal" step="0.01" placeholder="例：84"></div>
           <div class="field"><label for="hp">前幾 %</label><input id="hp" type="number" inputmode="decimal" step="1" value="25"></div>
         </div>
-        <div class="field"><label for="hs">高標標準差<span class="opt">前段同學才需要</span></label><input id="hs" type="number" inputmode="decimal" step="0.01" placeholder="例：3.5"></div>
-        <div class="hint" style="margin-top:-6px">高標分數＝成績單上「高標」那個分數，是前幾 % 同學的平均（學校讀卡常見 25%），不清楚就留白。高標標準差＝這群前段同學分數的標準差，填了可以推估你在前段群裡的名次。萬一成績單沒有班級標準差，填高標分數也能讓頁面粗估。</div>
+        <div class="row2">
+          <div class="field"><label for="hs">高標標準差<span class="opt">前段同學才需要</span></label><input id="hs" type="number" inputmode="decimal" step="0.01" placeholder="例：3.5"></div>
+          <div class="field"><label for="hsp">前幾 %</label><input id="hsp" type="number" inputmode="decimal" step="1" value="25"></div>
+        </div>
+        <div class="hint" style="margin-top:-6px">高標分數＝成績單上「高標」那個分數，是前幾 % 同學的平均（學校讀卡常見 25%），不清楚就留白。高標標準差＝前幾 % 同學分數的標準差，填了可以推估你在前段群裡的名次。它和高標分數必須是同一群人，所以兩個「前幾 %」會一起變動。萬一成績單沒有班級標準差，填高標分數也能讓頁面粗估。</div>
         <div class="grp">選填：全校（全年級）</div>
         <div class="hint" style="margin-top:-6px">有全校成績時再填，可以比較你在班上與在全校的位置。三格都填才會計算。</div>
         <div class="field"><label for="gm">全校平均</label><input id="gm" type="number" inputmode="decimal" step="0.01" value="68"></div>
@@ -183,7 +186,7 @@ ol,ul{padding-left:1.3em;margin:6px 0}
 </div>
 
 <script>
-const $=id=>document.getElementById(id), f=(x,d=2)=>x.toFixed(d), ids=['x','m','s','hi','hp','hs','n','mx','gm','gs','gn'];
+const $=id=>document.getElementById(id), f=(x,d=2)=>x.toFixed(d), ids=['x','m','s','hi','hp','hs','hsp','n','mx','gm','gs','gn'];
 const num=id=>{const v=$(id).value.trim();return v===''?NaN:parseFloat(v)};
 function Phi(z){const t=1/(1+0.2316419*Math.abs(z)),d=0.3989423*Math.exp(-z*z/2);const p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p}
 function zq(p){let a=-8,b=8;for(let i=0;i<60;i++){const c=(a+b)/2;Phi(c)<p?a=c:b=c}return(a+b)/2}
@@ -267,9 +270,10 @@ function upd(e){
   if(!isNaN(mx))t+=` 最高分是 ${mx}，你距離最高分 ${f(Math.max(0,mx-x),1)} 分。`+(x>mx?' （你的分數比最高分還高，請確認有沒有打錯。）':'');
   $('s4').innerHTML=t;
 }
+$('hp').addEventListener('input',()=>{$('hsp').value=$('hp').value});$('hsp').addEventListener('input',()=>{$('hp').value=$('hsp').value});
 ids.forEach(k=>$(k).addEventListener('input',e=>{if(shown)upd(e)}));
 $('f').addEventListener('submit',e=>{e.preventDefault();shown=true;document.activeElement&&document.activeElement.blur();upd(e);if(innerWidth<700)$('headline').scrollIntoView({behavior:'smooth',block:'start'})});
-$('clear').addEventListener('click',()=>{['x','m','s','hi','hs','n','mx','gm','gs','gn'].forEach(k=>$(k).value='');$('hp').value=25;$('sampleTag').hidden=true;shown=false;reset();try{localStorage.removeItem('myscore')}catch(_){};$('x').focus()});
+$('clear').addEventListener('click',()=>{['x','m','s','hi','hs','n','mx','gm','gs','gn'].forEach(k=>$(k).value='');$('hp').value=25;$('hsp').value=25;$('sampleTag').hidden=true;shown=false;reset();try{localStorage.removeItem('myscore')}catch(_){};$('x').focus()});
 function reset(){$('s5box').hidden=true;$('err').textContent='';$('sEst').textContent='';$('estBox').hidden=true;$('headline').innerHTML='<span class="empty">填好必填欄位後按「送出計算」，這裡會顯示你的位置。</span>';$('curve').innerHTML='';['s1f','s1','s2f','s2','s3f','s3','s4'].forEach(k=>$(k).innerHTML='<span class="empty">（送出後顯示）</span>')}
 let shown=true;upd();
 </script>
