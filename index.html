@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}*{-webkit-tap-highlight-color:transparent}</style>
+<title>我的分數在哪裡</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 版面：單欄講義；上方輸入卡＋即時曲線，下方逐步解說，數字隨輸入更新 */
+:root{
+  --bg:#f3f6f5; --paper:#ffffff; --ink:#17302c; --muted:#5b706b; --line:#d5dfdc;
+  --accent:#0f7a68; --accent-soft:#d9efe9; --warm:#c2571a; --warm-soft:#fbe6d8; --school:#6a4fb3;
+  --serif:"Noto Serif TC","Songti TC",serif; --sans:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1918; --paper:#172423; --ink:#e3eeeb; --muted:#94aaa4; --line:#2b3d3a;
+  --accent:#4cc3a9; --accent-soft:#163a33; --warm:#f08a4b; --warm-soft:#3d2414; --school:#a993ec; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1918; --paper:#172423; --ink:#e3eeeb; --muted:#94aaa4; --line:#2b3d3a;
+  --accent:#4cc3a9; --accent-soft:#163a33; --warm:#f08a4b; --warm-soft:#3d2414; --school:#a993ec; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75}
+.wrap{max-width:880px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,6vw,40px);line-height:1.25;margin:0;text-wrap:balance}
+h2{font-family:var(--serif);font-size:22px;margin:0 0 8px;text-wrap:balance}
+.lead{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.top{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:700px){.top{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+label{display:block;font-weight:700;font-size:14px}
+.hint{font-size:12.5px;color:var(--muted);font-weight:400}
+input{width:100%;box-sizing:border-box;font:500 18px var(--mono);min-height:48px;padding:8px 12px;touch-action:manipulation;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+input::placeholder{color:var(--muted);opacity:.7}
+.field{display:grid;gap:3px}
+.form{display:grid;gap:12px}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:end}
+[hidden]{display:none!important}
+.grp{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700;border-bottom:1px solid var(--line);padding-bottom:2px;margin-top:4px}
+.opt{font-size:12px;color:var(--muted);font-weight:500;margin-left:4px}
+.est{font-size:12.5px;color:var(--warm)}
+.result{font-family:var(--serif);font-size:20px;line-height:1.5;margin:4px 0 0}
+.result strong{color:var(--accent);font-size:30px}
+svg text{fill:var(--muted);font-size:12px;font-family:var(--sans)}
+.step{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px}
+.num{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font:600 18px var(--serif)}
+.formula{font-family:var(--mono);background:var(--accent-soft);border-radius:8px;padding:10px 14px;overflow-x:auto;white-space:nowrap;margin:8px 0}
+.mine{color:var(--warm);font-weight:700}
+.note{background:var(--warm-soft);border-radius:8px;padding:12px 16px;font-size:15px}
+table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums;width:100%}
+td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}
+th{color:var(--muted);font-weight:500}
+.tbl{overflow-x:auto}
+.err{color:var(--warm);font-size:14px;min-height:1.2em}
+.btns{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+.primary{background:var(--accent);color:var(--paper);border-color:var(--accent);font-weight:700}
+.primary:active,button:active{transform:scale(.98)}
+.empty{color:var(--muted);font-size:16px}
+summary{cursor:pointer;font-weight:700;color:var(--accent);min-height:44px;display:flex;align-items:center}
+.sample{display:inline-block;font-size:12px;background:var(--warm-soft);color:var(--warm);border-radius:999px;padding:1px 10px;margin-bottom:8px}
+button{font:inherit;font-size:16px;min-height:48px;touch-action:manipulation;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:focus-visible{outline:2px solid var(--accent)}
+ol,ul{padding-left:1.3em;margin:6px 0}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>我的分數在哪裡</h1>
+    <p class="lead">分數本身只說了一半。平均、標準差、高標，能告訴你「這個分數在一群人裡代表什麼」。任何一次考試、任何科目都能用：班上、全校、模擬考都可以。輸入成績單上有的數字，下面每一步都會用你的數字示範。</p>
+  </header>
+
+  <section class="top">
+    <div class="card">
+      <span class="sample" id="sampleTag">目前是範例數字，請換成你的</span>
+      <form class="form" id="f" novalidate>
+        <div class="grp">必填：班級（或你要比較的那群人）</div>
+        <div class="field"><label for="x">我的分數</label><input id="x" type="number" inputmode="decimal" step="0.1" value="80"></div>
+        <div class="field"><label for="m">班級平均</label><input id="m" type="number" inputmode="decimal" step="0.01" value="72"></div>
+        <div class="field"><label for="s">班級標準差</label><input id="s" type="number" inputmode="decimal" step="0.01" value="11"><div class="est" id="sEst"></div></div>
+        <div class="grp">選填：班級其他資料</div>
+        <div class="field"><label for="n">班級人數<span class="opt">填了才能換算班排</span></label><input id="n" type="number" inputmode="numeric" step="1" value="35"></div>
+        <div class="field"><label for="mx">最高分<span class="opt">用來檢查</span></label><input id="mx" type="number" inputmode="decimal" step="0.1" placeholder="例：95"></div>
+        <div class="row2">
+          <div class="field"><label for="hi">高標<span class="opt">用來檢查</span></label><input id="hi" type="number" inputmode="decimal" step="0.01" placeholder="例：84"></div>
+          <div class="field"><label for="hp">前幾 %</label><input id="hp" type="number" inputmode="decimal" step="1" value="25"></div>
+        </div>
+        <div class="hint" style="margin-top:-6px">不清楚高標怎麼算就留白。若填，要寫它是「前幾 %」的平均（學校讀卡常見 25%）。萬一成績單沒有標準差，填高標也能讓頁面粗估標準差。</div>
+        <div class="grp">選填：全校（全年級）</div>
+        <div class="hint" style="margin-top:-6px">有全校成績時再填，可以比較你在班上與在全校的位置。三格都填才會計算。</div>
+        <div class="field"><label for="gm">全校平均</label><input id="gm" type="number" inputmode="decimal" step="0.01" value="68"></div>
+        <div class="field"><label for="gs">全校標準差</label><input id="gs" type="number" inputmode="decimal" step="0.01" value="13"></div>
+        <div class="field"><label for="gn">全校人數</label><input id="gn" type="number" inputmode="numeric" step="1" value="400"></div>
+        <div class="err" id="err"></div>
+        <div class="btns"><button id="go" type="submit" class="primary">送出計算</button><button id="clear" type="button">清空</button></div>
+      </form>
+    </div>
+    <div class="card">
+      <p class="result" id="headline"></p>
+      <svg id="curve" viewBox="0 0 520 200" width="100%" role="img" aria-label="分數分布示意與我的位置"></svg>
+      <p style="font-size:13px;color:var(--muted);margin:0">曲線是用平均與標準差畫出的「鐘形示意」。<b style="color:var(--accent)">綠色實線</b>是班級，綠色區域是你在班上贏過的人；<b style="color:var(--school)">紫色虛線</b>是全校；橘線是你。</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>先認識這幾個數字</h2>
+    <ul>
+      <li><b>平均</b>：所有人分數加總 ÷ 人數，是這群人的「中心」。</li>
+      <li><b>標準差</b>：分數離平均「通常有多遠」。數字大，表示大家高低差距大；數字小，表示大家分數很接近。<br>
+        算法：每個人的（分數 − 平均）平方，全部加起來 ÷ 人數，再開根號：<span class="formula" style="display:inline-block;white-space:normal">σ = √[ Σ(xᵢ − 平均)² ÷ N ]</span><br>
+        這裡除以 N，因為全部的人都算進去了，描述的就是「這群人」本身。（有些系統會除以 N−1，人數多時差很少。）</li>
+      <li><b>高標</b>：由高到低排，<b>前某個百分比</b>的人的平均。學校讀卡系統常用前 25%，舊制指考用前 50%。學測的「頂標、前標」則是某一個排名的分數，不是平均，算法不同。</li>
+    </ul>
+  </section>
+
+  <section class="card step"><div class="num">1</div><div>
+    <h2>跟平均比：我在中心的哪一邊？</h2>
+    <div class="formula" id="s1f"></div>
+    <p id="s1"></p>
+  </div></section>
+
+  <section class="card step"><div class="num">2</div><div>
+    <h2>用標準差當尺：我離平均幾把尺？</h2>
+    <p>光看「差幾分」不夠。同樣高 10 分，在大家分數很接近的考試（標準差小）很厲害；在分數很分散的考試（標準差大）就沒那麼突出。所以把差距除以標準差，得到 <b>z 分數</b>：</p>
+    <div class="formula" id="s2f"></div>
+    <p id="s2"></p>
+  </div></section>
+
+  <section class="card step"><div class="num">補</div><div>
+    <h2>成績單沒有標準差？用高標推估</h2>
+    <p>如果分數接近鐘形分布，「前 p% 的平均」會比全體平均高出固定倍數的標準差，這個倍數 k 只跟 p 有關：</p>
+    <div class="formula">標準差 ≈ (高標 − 平均) ÷ k</div>
+    <div class="tbl"><table><tr><th>高標定義</th><th>前 10%</th><th>前 25%</th><th>前 50%</th></tr><tr><th>k</th><td>1.755</td><td>1.271</td><td>0.798</td></tr></table></div>
+    <p>例：平均 70、高標（前 25%）84，標準差 ≈ (84 − 70) ÷ 1.271 ≈ 11.0。</p>
+    <div id="estBox" hidden><div class="formula" id="ef"></div><p id="et"></p></div>
+    <p class="hint">這只是近似值，真實分數分布越不像鐘形，誤差越大。成績單有標準差時，請直接用標準差。</p>
+  </div></section>
+
+  <section class="card step"><div class="num">3</div><div>
+    <h2>把 z 換成「贏過幾 %」與名次</h2>
+    <p>如果分數大致是鐘形分布，z 就能對應到百分比：</p>
+    <div class="tbl"><table><tr><th>z</th><th>−1.5</th><th>−1</th><th>−0.5</th><th>0</th><th>0.5</th><th>1</th><th>1.5</th><th>2</th></tr>
+      <tr><th>贏過約</th><td>7%</td><td>16%</td><td>31%</td><td>50%</td><td>69%</td><td>84%</td><td>93%</td><td>98%</td></tr></table></div>
+    <div class="formula" id="s3f"></div>
+    <p id="s3"></p>
+  </div></section>
+
+  <section class="card step"><div class="num">4</div><div>
+    <h2>用高標和最高分檢查</h2>
+    <p id="s4"></p>
+  </div></section>
+
+  <section class="card step"><div class="num">5</div><div>
+    <h2>班排、校排，都是同一套公式</h2>
+    <p>名次是「你在某一群人裡的位置」。要推班排，就填班上的平均、標準差、人數；要推校排，就換成全年級的平均、標準差、人數。公式完全一樣，只是比較的群體不同。</p>
+    <p>如果只有各班的資料，也能自己合成全年級的數字（不需要每個人的分數）：</p>
+    <div class="formula">全體平均 = Σ(各班人數 × 各班平均) ÷ 總人數</div>
+    <div class="formula">全體標準差 = √[ Σ 各班人數 × (各班標準差² + 各班平均²) ÷ 總人數 − 全體平均² ]</div>
+    <p>第二條的意思：全體的分散 = 各班「班內的分散」＋「各班平均彼此之間的差距」。</p>
+    <div id="s5box"><div class="formula" id="s5f"></div><p id="s5"></p></div>
+    <p class="hint">全校人數多，分數通常更接近鐘形，所以校排的推估一般比班排準；但名次範圍也比較寬。</p>
+  </div></section>
+
+  <section class="card">
+    <h2>為什麼這只是「推估」？</h2>
+    <ol>
+      <li>一班只有二、三十人，分數不一定是漂亮的鐘形。若有幾個人分數特別低，平均會被拉低，你的 z 看起來會偏高，推估名次可能比實際好。</li>
+      <li>同分的人多時，名次會擠在一起。</li>
+      <li>曲線兩端（很高分、很低分）的推估最不準；用高標推估標準差也一樣只是近似。請搭配高標與最高分一起看。</li>
+    </ol>
+    <div class="note"><b>想一想：</b>你推估出的名次，和「是否高於高標」互相矛盾嗎？如果推估你在前 25% 裡，分數卻低於「前 25% 高標」，這可能嗎？為什麼？</div>
+    <details style="margin-top:12px"><summary>看解答</summary>
+      <p><b>可能，而且很常見，並不矛盾。</b></p>
+      <p>高標是「前 25% 那群人的<b>平均</b>」。既然是平均，這群人裡一定有人高於它、也有人低於它，就像全班一定有人低於全班平均。前 25% 裡分數較低的那一半，分數本來就會在高標之下。</p>
+      <p>舉例：35 人取前 8 名，這 8 人是 95、92、90、88、86、85、84、84，平均（高標）是 88。第 6～8 名的 85、84、84 都在前 25% 裡，但都低於高標。</p>
+      <p>所以：<b>高於高標</b>，幾乎確定在前 25%，而且在這群人中段以上；<b>低於高標</b>，不代表不在前 25%，要再看你離平均、離高標各有多遠。真正的「前 25% 門檻」會比高標低一些。</p>
+    </details>
+  </section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id), f=(x,d=2)=>x.toFixed(d), ids=['x','m','s','hi','hp','n','mx','gm','gs','gn'];
+const num=id=>{const v=$(id).value.trim();return v===''?NaN:parseFloat(v)};
+function Phi(z){const t=1/(1+0.2316419*Math.abs(z)),d=0.3989423*Math.exp(-z*z/2);const p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p}
+function zq(p){let a=-8,b=8;for(let i=0;i<60;i++){const c=(a+b)/2;Phi(c)<p?a=c:b=c}return(a+b)/2}
+const phi=z=>Math.exp(-z*z/2)/Math.sqrt(2*Math.PI);
+try{const s=JSON.parse(localStorage.getItem('myscore')||'null');if(s){ids.forEach(k=>{if(s[k]!=null)$(k).value=s[k]});$('sampleTag').hidden=true}}catch(e){}
+function curve(m,s,x,hi,G){
+  const L=20,R=500,B=165;let lo=m-3.2*s,up=m+3.2*s;
+  if(G){lo=Math.min(lo,G.m-3.2*G.s);up=Math.max(up,G.m+3.2*G.s)}
+  const sc=G?Math.min(s,G.s):s,X=v=>L+(v-lo)/(up-lo)*(R-L),Y=v=>B-Math.exp(-(((v-m)/s)**2)/2)*130*sc/s,YG=v=>B-Math.exp(-(((v-G.m)/G.s)**2)/2)*130*sc/G.s;
+  let p='';for(let i=0;i<=120;i++){const v=lo+(up-lo)*i/120;p+=(i?'L':'M')+X(v).toFixed(1)+' '+Y(v).toFixed(1)}
+  const xc=Math.min(Math.max(x,lo),up);let a=`M${L} ${B}`;for(let i=0;i<=80;i++){const v=lo+(xc-lo)*i/80;a+=`L${X(v).toFixed(1)} ${Y(v).toFixed(1)}`}a+=`L${X(xc).toFixed(1)} ${B}Z`;
+  const tick=(v,t,col,dy)=>`<line x1="${X(v)}" x2="${X(v)}" y1="${B}" y2="${B+6}" stroke="var(--muted)"/><text x="${X(v)}" y="${B+20+dy}" text-anchor="middle" ${col?`style="fill:${col}"`:''}>${t}</text>`;
+  let gp='';if(G){for(let i=0;i<=120;i++){const v=lo+(up-lo)*i/120;gp+=(i?'L':'M')+X(v).toFixed(1)+' '+YG(v).toFixed(1)}}
+  let g=`<path d="${a}" fill="var(--accent-soft)"/>`+(G?`<path d="${gp}" fill="none" stroke="var(--school)" stroke-width="2" stroke-dasharray="6 4"/><line x1="${X(G.m)}" x2="${X(G.m)}" y1="${YG(G.m)}" y2="${B}" stroke="var(--school)" stroke-dasharray="2 3"/><text x="${X(G.m)}" y="${YG(G.m)-6}" text-anchor="middle" style="fill:var(--school)">全校平均 ${f(G.m,1)}</text>`:'')+`<path d="${p}" fill="none" stroke="var(--accent)" stroke-width="2"/><line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="var(--line)"/>`;
+  g+=`<line x1="${X(m)}" x2="${X(m)}" y1="${Y(m)}" y2="${B}" stroke="var(--muted)" stroke-dasharray="3 3"/>`+tick(m,'平均 '+f(m,1),'',0);
+  if(!isNaN(hi)&&hi>lo&&hi<up)g+=`<line x1="${X(hi)}" x2="${X(hi)}" y1="${Y(hi)}" y2="${B}" stroke="var(--accent)" stroke-dasharray="3 3"/>`+tick(hi,'高標 '+f(hi,1),'var(--accent)',14);
+  g+=`<line x1="${X(xc)}" x2="${X(xc)}" y1="22" y2="${B}" stroke="var(--warm)" stroke-width="2.5"/><text x="${X(xc)}" y="16" text-anchor="middle" style="fill:var(--warm);font-weight:700;font-size:13px">我 ${x}</text>`;
+  $('curve').innerHTML=g;
+}
+function upd(e){
+  if(!shown)return;
+  if(e)$('sampleTag').hidden=true;
+  try{const o={};ids.forEach(k=>o[k]=$(k).value);if(e)localStorage.setItem('myscore',JSON.stringify(o))}catch(_){}
+  const x=num('x'),m=num('m'),hi=num('hi'),hp=num('hp'),n=Math.round(num('n')),mx=num('mx');let s=num('s');
+  const err=$('err');err.textContent='';
+  if(isNaN(x)||isNaN(m)){reset();err.textContent='請填必填的「我的分數」和「平均」。';return}
+  let estimated=false,k=NaN;
+  const hasHi=!isNaN(hi)&&!isNaN(hp)&&hp>0&&hp<100;
+  if(hasHi){const p=hp/100,zp=zq(1-p);k=phi(zp)/p}
+  $('estBox').hidden=true;$('sEst').textContent='';
+  if(isNaN(s)||s<=0){
+    if(hasHi&&hi>m){s=(hi-m)/k;estimated=true;$('sEst').textContent=`由高標推估：標準差 ≈ ${f(s)}`;
+      $('estBox').hidden=false;
+      $('ef').innerHTML=`標準差 ≈ (高標 − 平均) ÷ ${f(k,3)} = (${hi} − ${m}) ÷ ${f(k,3)} = <span class="mine">${f(s)}</span>`;
+      $('et').innerHTML=`你沒有填標準差，所以頁面用你填的高標（前 ${hp}%，k = ${f(k,3)}）推估，上面各步驟都用這個值計算。`;
+    }else{reset();err.textContent='請填必填的「標準差」。（成績單真的沒有的話，可在選填區填高標與前幾 %，頁面會粗估。）';return}
+  }
+  const d=x-m,z=d/s,P=Phi(z),top=1-P,hasN=n>0;
+  const rank=hasN?Math.min(n,Math.max(1,Math.round(n*top+0.5))):0,w=hasN?Math.max(1,Math.round(n*0.03)):0;
+  const r1=Math.max(1,rank-w),r2=Math.min(n,rank+w);
+  $('headline').innerHTML=(hasN?`推估你大約是第 <strong>${r1}～${r2}</strong> 名 / ${n} 人<br>`:'')+`<span style="font-size:${hasN?16:22}px;color:var(--muted)">約贏過 <b style="color:var(--accent)">${Math.round(P*100)}%</b> 的人${estimated?'（標準差為推估）':''}</span>`;
+  const gm=num('gm'),gs=num('gs'),gn=Math.round(num('gn')),hasG=!isNaN(gm)&&gs>0&&gn>0;
+  curve(m,s,x,hasHi?hi:NaN,hasG?{m:gm,s:gs}:null);
+  if(hasG){
+    const gz=(x-gm)/gs,gP=Phi(gz),gt=1-gP,gr=Math.min(gn,Math.max(1,Math.round(gn*gt+0.5))),gw=Math.max(1,Math.round(gn*0.03)),cz=(m-gm)/gs;
+    $('headline').innerHTML+=`<br><span style="font-size:16px;color:var(--school)">全校推估約第 <b>${Math.max(1,gr-gw)}～${Math.min(gn,gr+gw)}</b> 名 / ${gn} 人（贏過約 ${Math.round(gP*100)}%）</span>`;
+    $('s5box').hidden=false;
+    $('s5f').innerHTML=`班上：z = ${f(z)} → 前 ${Math.max(1,Math.round(top*100))}%<br>全校：z = (${x} − ${gm}) ÷ ${gs} = <span class="mine">${f(gz)}</span> → 前 ${Math.max(1,Math.round(gt*100))}%<br>班級整體：(班平均 − 全校平均) ÷ 全校標準差 = (${m} − ${gm}) ÷ ${gs} = <span class="mine">${cz>=0?'+':''}${f(cz)}</span>`;
+    let u=`你在班上大約前 <b>${Math.max(1,Math.round(top*100))}%</b>，在全校大約前 <b>${Math.max(1,Math.round(gt*100))}%</b>。`;
+    u+=cz>0.15?`你們班的平均比全校高 ${f(cz)} 個標準差，整體表現比全校好，班上競爭比較激烈，所以你在全校的位置會比在班上更前面。班排不理想不一定代表考不好。`:cz<-0.15?`你們班的平均比全校低 ${f(-cz)} 個標準差，整體表現比全校弱，所以你在班上的位置看起來比在全校好。想知道自己真正的程度，校排更有參考價值。`:`你們班的平均和全校差不多，所以班排和校排的相對位置接近。`;
+    $('s5').innerHTML=u;
+  }else{$('s5box').hidden=true}
+  $('s1f').innerHTML=`<span class="mine">${x}</span> − ${m} = <span class="mine">${d>=0?'+':''}${f(d)}</span>`;
+  $('s1').innerHTML=d>=0?`你比平均高 <b>${f(Math.abs(d),1)}</b> 分，在中心的上方。但這樣算不算「很高」？要看下一步的標準差。`:`你比平均低 <b>${f(Math.abs(d),1)}</b> 分，在中心的下方。差多少才算「很多」？要看下一步的標準差。`;
+  $('s2f').innerHTML=`z = (${x} − ${m}) ÷ ${f(s)} = <span class="mine">${f(z)}</span>`;
+  const az=Math.abs(z);
+  $('s2').innerHTML=`你離平均 <b>${f(az)}</b> 把尺（標準差），${z>=0?'在平均之上':'在平均之下'}。`+(az<0.5?'這很接近中間群，差一點點就會前進或後退不少名次。':az<1?'屬於中間偏'+(z>0?'上':'下')+'的位置。':az<2?'已經明顯'+(z>0?'領先':'落後')+'大部分的人。':'非常'+(z>0?'突出':'落後')+'，在最'+(z>0?'前':'後')+'端。');
+  $('s3f').innerHTML=`贏過約 ${Math.round(P*100)}% → 在前 ${Math.max(1,Math.round(top*100))}%`+(hasN?` → ${n} × ${f(top)} ≈ <span class="mine">第 ${rank} 名左右</span>`:'');
+  $('s3').innerHTML=hasN?`換算成名次約第 <b>${r1}～${r2}</b> 名（推估有誤差，所以給一個範圍）。`:'填入「總人數」就能換算成名次。';
+  let t='';
+  if(hasHi){
+    const hn=hasN?Math.floor(n*hp/100):null;
+    t+=`高標 ${hi} 是前 ${hp}%${hn?`（約 ${hn} 人）`:''}的平均。`;
+    if(x>=hi)t+=`你的分數<b>高於高標</b>，表示你很可能在前 ${hp}% 之中，而且在這群人裡也不算落後。`;
+    else if(x>=hi-(hi-m)/2)t+=`你比高標低 ${f(hi-x,1)} 分，大約在前 ${hp}% 的邊緣附近，再進步一點就能擠進去。`;
+    else t+=`你比高標低 ${f(hi-x,1)} 分。高標可以當作下一次的目標。`;
+    if(top*100<=hp&&x<hi)t+=`<br><br>推估你在前 ${hp}% 裡，分數卻低於高標，這並不矛盾：高標是這群人的「平均」，裡面本來就有一部分人在高標之下。`;
+  }else t+='沒有填高標，這一步略過。填上高標與「前幾 %」可以多一個檢查點。';
+  if(!isNaN(mx))t+=` 最高分是 ${mx}，你距離最高分 ${f(Math.max(0,mx-x),1)} 分。`+(x>mx?' （你的分數比最高分還高，請確認有沒有打錯。）':'');
+  $('s4').innerHTML=t;
+}
+ids.forEach(k=>$(k).addEventListener('input',e=>{if(shown)upd(e)}));
+$('f').addEventListener('submit',e=>{e.preventDefault();shown=true;document.activeElement&&document.activeElement.blur();upd(e);if(innerWidth<700)$('headline').scrollIntoView({behavior:'smooth',block:'start'})});
+$('clear').addEventListener('click',()=>{['x','m','s','hi','n','mx','gm','gs','gn'].forEach(k=>$(k).value='');$('hp').value=25;$('sampleTag').hidden=true;shown=false;reset();try{localStorage.removeItem('myscore')}catch(_){};$('x').focus()});
+function reset(){$('s5box').hidden=true;$('err').textContent='';$('sEst').textContent='';$('estBox').hidden=true;$('headline').innerHTML='<span class="empty">填好必填欄位後按「送出計算」，這裡會顯示你的位置。</span>';$('curve').innerHTML='';['s1f','s1','s2f','s2','s3f','s3','s4'].forEach(k=>$(k).innerHTML='<span class="empty">（送出後顯示）</span>')}
+let shown=true;upd();
+</script>
+
+</body>
+</html>
