@@ -69,7 +69,7 @@ ol,ul{padding-left:1.3em;margin:6px 0}
 <div class="wrap">
   <header>
     <h1>我的分數在哪裡</h1>
-    <p class="lead">分數本身只說了一半。平均、標準差、高標，能告訴你「這個分數在一群人裡代表什麼」。任何一次考試、任何科目都能用：班上、全校、模擬考都可以。輸入成績單上有的數字，下面每一步都會用你的數字示範。</p>
+    <p class="lead">分數本身只說了一半。平均、標準差、高標分數，能告訴你「這個分數在一群人裡代表什麼」。任何一次考試、任何科目都能用：班上、全校、模擬考都可以。輸入成績單上有的數字，下面每一步都會用你的數字示範。</p>
   </header>
 
   <section class="top">
@@ -87,7 +87,8 @@ ol,ul{padding-left:1.3em;margin:6px 0}
           <div class="field"><label for="hi">高標分數<span class="opt">用來檢查</span></label><input id="hi" type="number" inputmode="decimal" step="0.01" placeholder="例：84"></div>
           <div class="field"><label for="hp">前幾 %</label><input id="hp" type="number" inputmode="decimal" step="1" value="25"></div>
         </div>
-        <div class="hint" style="margin-top:-6px">高標分數＝成績單上「高標」那個分數。不清楚高標怎麼算就留白。若填，要寫它是「前幾 %」的平均（學校讀卡常見 25%）。萬一成績單沒有標準差，填高標也能讓頁面粗估標準差。</div>
+        <div class="field"><label for="hs">高標標準差<span class="opt">前段同學才需要</span></label><input id="hs" type="number" inputmode="decimal" step="0.01" placeholder="例：3.5"></div>
+        <div class="hint" style="margin-top:-6px">高標分數＝成績單上「高標」那個分數，是前幾 % 同學的平均（學校讀卡常見 25%），不清楚就留白。高標標準差＝這群前段同學分數的標準差，填了可以推估你在前段群裡的名次。萬一成績單沒有班級標準差，填高標分數也能讓頁面粗估。</div>
         <div class="grp">選填：全校（全年級）</div>
         <div class="hint" style="margin-top:-6px">有全校成績時再填，可以比較你在班上與在全校的位置。三格都填才會計算。</div>
         <div class="field"><label for="gm">全校平均</label><input id="gm" type="number" inputmode="decimal" step="0.01" value="68"></div>
@@ -111,7 +112,8 @@ ol,ul{padding-left:1.3em;margin:6px 0}
       <li><b>標準差</b>：分數離平均「通常有多遠」。數字大，表示大家高低差距大；數字小，表示大家分數很接近。<br>
         算法：每個人的（分數 − 平均）平方，全部加起來 ÷ 人數，再開根號：<span class="formula" style="display:inline-block;white-space:normal">σ = √[ Σ(xᵢ − 平均)² ÷ N ]</span><br>
         這裡除以 N，因為全部的人都算進去了，描述的就是「這群人」本身。（有些系統會除以 N−1，人數多時差很少。）</li>
-      <li><b>高標</b>：由高到低排，<b>前某個百分比</b>的人的平均。學校讀卡系統常用前 25%，舊制指考用前 50%。學測的「頂標、前標」則是某一個排名的分數，不是平均，算法不同。</li>
+      <li><b>高標分數</b>：由高到低排，<b>前某個百分比</b>的人的平均。學校讀卡系統常用前 25%，舊制指考用前 50%。學測的「頂標、前標」則是某一個排名的分數，不是平均，算法不同。</li>
+      <li><b>高標標準差</b>：只看前段那群人，他們分數之間的差距。數字越小，代表前段同學分數擠在一起，差 1、2 分名次就差好幾名。</li>
     </ul>
   </section>
 
@@ -129,11 +131,11 @@ ol,ul{padding-left:1.3em;margin:6px 0}
   </div></section>
 
   <section class="card step"><div class="num">補</div><div>
-    <h2>成績單沒有標準差？用高標推估</h2>
+    <h2>成績單沒有標準差？用高標分數推估</h2>
     <p>如果分數接近鐘形分布，「前 p% 的平均」會比全體平均高出固定倍數的標準差，這個倍數 k 只跟 p 有關：</p>
-    <div class="formula">標準差 ≈ (高標 − 平均) ÷ k</div>
+    <div class="formula">標準差 ≈ (高標分數 − 平均) ÷ k</div>
     <div class="tbl"><table><tr><th>高標定義</th><th>前 10%</th><th>前 25%</th><th>前 50%</th></tr><tr><th>k</th><td>1.755</td><td>1.271</td><td>0.798</td></tr></table></div>
-    <p>例：平均 70、高標（前 25%）84，標準差 ≈ (84 − 70) ÷ 1.271 ≈ 11.0。</p>
+    <p>例：平均 70、高標分數（前 25%）84，標準差 ≈ (84 − 70) ÷ 1.271 ≈ 11.0。</p>
     <div id="estBox" hidden><div class="formula" id="ef"></div><p id="et"></p></div>
     <p class="hint">這只是近似值，真實分數分布越不像鐘形，誤差越大。成績單有標準差時，請直接用標準差。</p>
   </div></section>
@@ -148,7 +150,7 @@ ol,ul{padding-left:1.3em;margin:6px 0}
   </div></section>
 
   <section class="card step"><div class="num">4</div><div>
-    <h2>用高標和最高分檢查</h2>
+    <h2>用高標分數、高標標準差和最高分檢查</h2>
     <p id="s4"></p>
   </div></section>
 
@@ -168,20 +170,20 @@ ol,ul{padding-left:1.3em;margin:6px 0}
     <ol>
       <li>一班只有二、三十人，分數不一定是漂亮的鐘形。若有幾個人分數特別低，平均會被拉低，你的 z 看起來會偏高，推估名次可能比實際好。</li>
       <li>同分的人多時，名次會擠在一起。</li>
-      <li>曲線兩端（很高分、很低分）的推估最不準；用高標推估標準差也一樣只是近似。請搭配高標與最高分一起看。</li>
+      <li>曲線兩端（很高分、很低分）的推估最不準；用高標分數推估標準差也一樣只是近似。前段同學請搭配高標分數、高標標準差與最高分一起看。</li>
     </ol>
-    <div class="note"><b>想一想：</b>你推估出的名次，和「是否高於高標」互相矛盾嗎？如果推估你在前 25% 裡，分數卻低於「前 25% 高標」，這可能嗎？為什麼？</div>
+    <div class="note"><b>想一想：</b>你推估出的名次，和「是否高於高標分數」互相矛盾嗎？如果推估你在前 25% 裡，分數卻低於前 25% 的高標分數，這可能嗎？為什麼？</div>
     <details style="margin-top:12px"><summary>看解答</summary>
       <p><b>可能，而且很常見，並不矛盾。</b></p>
-      <p>高標是「前 25% 那群人的<b>平均</b>」。既然是平均，這群人裡一定有人高於它、也有人低於它，就像全班一定有人低於全班平均。前 25% 裡分數較低的那一半，分數本來就會在高標之下。</p>
-      <p>舉例：35 人取前 8 名，這 8 人是 95、92、90、88、86、85、84、84，平均（高標）是 88。第 6～8 名的 85、84、84 都在前 25% 裡，但都低於高標。</p>
-      <p>所以：<b>高於高標</b>，幾乎確定在前 25%，而且在這群人中段以上；<b>低於高標</b>，不代表不在前 25%，要再看你離平均、離高標各有多遠。真正的「前 25% 門檻」會比高標低一些。</p>
+      <p>高標分數是「前 25% 那群人的<b>平均</b>」。既然是平均，這群人裡一定有人高於它、也有人低於它，就像全班一定有人低於全班平均。前 25% 裡分數較低的那一半，分數本來就會在高標分數之下。</p>
+      <p>舉例：35 人取前 8 名，這 8 人是 95、92、90、88、86、85、84、84，平均（高標分數）是 88。第 6～8 名的 85、84、84 都在前 25% 裡，但都低於高標分數。</p>
+      <p>所以：<b>高於高標分數</b>，幾乎確定在前 25%，而且在這群人中段以上；<b>低於高標分數</b>，不代表不在前 25%，要再看你離平均、離高標分數各有多遠。真正的「前 25% 門檻」會比高標分數低一些。</p>
     </details>
   </section>
 </div>
 
 <script>
-const $=id=>document.getElementById(id), f=(x,d=2)=>x.toFixed(d), ids=['x','m','s','hi','hp','n','mx','gm','gs','gn'];
+const $=id=>document.getElementById(id), f=(x,d=2)=>x.toFixed(d), ids=['x','m','s','hi','hp','hs','n','mx','gm','gs','gn'];
 const num=id=>{const v=$(id).value.trim();return v===''?NaN:parseFloat(v)};
 function Phi(z){const t=1/(1+0.2316419*Math.abs(z)),d=0.3989423*Math.exp(-z*z/2);const p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p}
 function zq(p){let a=-8,b=8;for(let i=0;i<60;i++){const c=(a+b)/2;Phi(c)<p?a=c:b=c}return(a+b)/2}
@@ -197,7 +199,7 @@ function curve(m,s,x,hi,G){
   let gp='';if(G){for(let i=0;i<=120;i++){const v=lo+(up-lo)*i/120;gp+=(i?'L':'M')+X(v).toFixed(1)+' '+YG(v).toFixed(1)}}
   let g=`<path d="${a}" fill="var(--accent-soft)"/>`+(G?`<path d="${gp}" fill="none" stroke="var(--school)" stroke-width="2" stroke-dasharray="6 4"/><line x1="${X(G.m)}" x2="${X(G.m)}" y1="${YG(G.m)}" y2="${B}" stroke="var(--school)" stroke-dasharray="2 3"/><text x="${X(G.m)}" y="${YG(G.m)-6}" text-anchor="middle" style="fill:var(--school)">全校平均 ${f(G.m,1)}</text>`:'')+`<path d="${p}" fill="none" stroke="var(--accent)" stroke-width="2"/><line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="var(--line)"/>`;
   g+=`<line x1="${X(m)}" x2="${X(m)}" y1="${Y(m)}" y2="${B}" stroke="var(--muted)" stroke-dasharray="3 3"/>`+tick(m,'平均 '+f(m,1),'',0);
-  if(!isNaN(hi)&&hi>lo&&hi<up)g+=`<line x1="${X(hi)}" x2="${X(hi)}" y1="${Y(hi)}" y2="${B}" stroke="var(--accent)" stroke-dasharray="3 3"/>`+tick(hi,'高標 '+f(hi,1),'var(--accent)',14);
+  if(!isNaN(hi)&&hi>lo&&hi<up)g+=`<line x1="${X(hi)}" x2="${X(hi)}" y1="${Y(hi)}" y2="${B}" stroke="var(--accent)" stroke-dasharray="3 3"/>`+tick(hi,'高標分數 '+f(hi,1),'var(--accent)',14);
   g+=`<line x1="${X(xc)}" x2="${X(xc)}" y1="22" y2="${B}" stroke="var(--warm)" stroke-width="2.5"/><text x="${X(xc)}" y="16" text-anchor="middle" style="fill:var(--warm);font-weight:700;font-size:13px">我 ${x}</text>`;
   $('curve').innerHTML=g;
 }
@@ -213,11 +215,11 @@ function upd(e){
   if(hasHi){const p=hp/100,zp=zq(1-p);k=phi(zp)/p}
   $('estBox').hidden=true;$('sEst').textContent='';
   if(isNaN(s)||s<=0){
-    if(hasHi&&hi>m){s=(hi-m)/k;estimated=true;$('sEst').textContent=`由高標推估：標準差 ≈ ${f(s)}`;
+    if(hasHi&&hi>m){s=(hi-m)/k;estimated=true;$('sEst').textContent=`由高標分數推估：標準差 ≈ ${f(s)}`;
       $('estBox').hidden=false;
-      $('ef').innerHTML=`標準差 ≈ (高標 − 平均) ÷ ${f(k,3)} = (${hi} − ${m}) ÷ ${f(k,3)} = <span class="mine">${f(s)}</span>`;
-      $('et').innerHTML=`你沒有填標準差，所以頁面用你填的高標（前 ${hp}%，k = ${f(k,3)}）推估，上面各步驟都用這個值計算。`;
-    }else{reset();err.textContent='請填必填的「標準差」。（成績單真的沒有的話，可在選填區填高標與前幾 %，頁面會粗估。）';return}
+      $('ef').innerHTML=`標準差 ≈ (高標分數 − 平均) ÷ ${f(k,3)} = (${hi} − ${m}) ÷ ${f(k,3)} = <span class="mine">${f(s)}</span>`;
+      $('et').innerHTML=`你沒有填標準差，所以頁面用你填的高標分數（前 ${hp}%，k = ${f(k,3)}）推估，上面各步驟都用這個值計算。`;
+    }else{reset();err.textContent='請填必填的「標準差」。（成績單真的沒有的話，可在選填區填高標分數與前幾 %，頁面會粗估。）';return}
   }
   const d=x-m,z=d/s,P=Phi(z),top=1-P,hasN=n>0;
   const rank=hasN?Math.min(n,Math.max(1,Math.round(n*top+0.5))):0,w=hasN?Math.max(1,Math.round(n*0.03)):0;
@@ -244,18 +246,30 @@ function upd(e){
   let t='';
   if(hasHi){
     const hn=hasN?Math.floor(n*hp/100):null;
-    t+=`高標 ${hi} 是前 ${hp}%${hn?`（約 ${hn} 人）`:''}的平均。`;
-    if(x>=hi)t+=`你的分數<b>高於高標</b>，表示你很可能在前 ${hp}% 之中，而且在這群人裡也不算落後。`;
-    else if(x>=hi-(hi-m)/2)t+=`你比高標低 ${f(hi-x,1)} 分，大約在前 ${hp}% 的邊緣附近，再進步一點就能擠進去。`;
-    else t+=`你比高標低 ${f(hi-x,1)} 分。高標可以當作下一次的目標。`;
-    if(top*100<=hp&&x<hi)t+=`<br><br>推估你在前 ${hp}% 裡，分數卻低於高標，這並不矛盾：高標是這群人的「平均」，裡面本來就有一部分人在高標之下。`;
-  }else t+='沒有填高標，這一步略過。填上高標與「前幾 %」可以多一個檢查點。';
+    t+=`高標分數 ${hi} 是前 ${hp}%${hn?`（約 ${hn} 人）`:''}的平均。`;
+    if(x>=hi)t+=`你的分數<b>高於高標分數</b>，表示你很可能在前 ${hp}% 之中，而且在這群人裡也不算落後。`;
+    else if(x>=hi-(hi-m)/2)t+=`你比高標分數低 ${f(hi-x,1)} 分，大約在前 ${hp}% 的邊緣附近，再進步一點就能擠進去。`;
+    else t+=`你比高標分數低 ${f(hi-x,1)} 分。高標分數可以當作下一次的目標。`;
+    if(top*100<=hp&&x<hi)t+=`<br><br>推估你在前 ${hp}% 裡，分數卻低於高標分數，這並不矛盾：高標分數是這群人的「平均」，裡面本來就有一部分人在高標分數之下。`;
+    const hs=num('hs');
+    if(hs>0){
+      const zt=(x-hi)/hs;
+      t+=`<div class="formula" style="margin-top:12px">前段群裡的 z = (我的分數 − 高標分數) ÷ 高標標準差 = (${x} − ${hi}) ÷ ${hs} = <span class="mine">${f(zt)}</span></div>`;
+      if(x<hi-2*hs)t+=`你的分數比高標分數低超過 2 個高標標準差，大概不在前 ${hp}% 這群人裡，所以高標標準差對你的推估幫助不大，看上面的名次即可。`;
+      else{
+        const Pt=Phi(zt);
+        if(hn>0){const rk=Math.min(hn,Math.max(1,Math.round(hn*(1-Pt)+0.5)));t+=`如果你在前 ${hp}% 這 ${hn} 人裡，推估你大約是這群人裡的<b>第 ${Math.max(1,rk-1)}～${Math.min(hn,rk+1)} 名</b>，也就是全體的第 ${Math.max(1,rk-1)}～${Math.min(hn,rk+1)} 名。前段同學看這個名次，會比用全體曲線推估更準。`}
+        else t+=`你在前段群裡大約贏過 ${Math.round(Pt*100)}% 的人。填入人數就能換算成名次。`;
+        t+=` 高標標準差是 ${hs}${hs<s*0.35?'，比全體標準差小很多，表示前段同學分數擠在一起，差 1、2 分名次就差好幾名。':'，前段同學之間仍有一定差距。'}`;
+      }
+    }
+  }else t+='沒有填高標分數，這一步略過。填上高標分數與「前幾 %」可以多一個檢查點。';
   if(!isNaN(mx))t+=` 最高分是 ${mx}，你距離最高分 ${f(Math.max(0,mx-x),1)} 分。`+(x>mx?' （你的分數比最高分還高，請確認有沒有打錯。）':'');
   $('s4').innerHTML=t;
 }
 ids.forEach(k=>$(k).addEventListener('input',e=>{if(shown)upd(e)}));
 $('f').addEventListener('submit',e=>{e.preventDefault();shown=true;document.activeElement&&document.activeElement.blur();upd(e);if(innerWidth<700)$('headline').scrollIntoView({behavior:'smooth',block:'start'})});
-$('clear').addEventListener('click',()=>{['x','m','s','hi','n','mx','gm','gs','gn'].forEach(k=>$(k).value='');$('hp').value=25;$('sampleTag').hidden=true;shown=false;reset();try{localStorage.removeItem('myscore')}catch(_){};$('x').focus()});
+$('clear').addEventListener('click',()=>{['x','m','s','hi','hs','n','mx','gm','gs','gn'].forEach(k=>$(k).value='');$('hp').value=25;$('sampleTag').hidden=true;shown=false;reset();try{localStorage.removeItem('myscore')}catch(_){};$('x').focus()});
 function reset(){$('s5box').hidden=true;$('err').textContent='';$('sEst').textContent='';$('estBox').hidden=true;$('headline').innerHTML='<span class="empty">填好必填欄位後按「送出計算」，這裡會顯示你的位置。</span>';$('curve').innerHTML='';['s1f','s1','s2f','s2','s3f','s3','s4'].forEach(k=>$(k).innerHTML='<span class="empty">（送出後顯示）</span>')}
 let shown=true;upd();
 </script>
